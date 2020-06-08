@@ -16,8 +16,16 @@ public interface ModuleChoose {
      */
     InputStreamReader startFrom(int page, InputStreamReader inputStreamReader);
 
+    /**
+     * 模板方法
+     * @param page
+     * @param type
+     * @param inputStreamReader
+     */
     default void read(int page, String type, InputStreamReader inputStreamReader) {
+        // 第一步,选择指定的页数
         inputStreamReader = startFrom(page, inputStreamReader);
+        // 第二步,选择阅读模式
         chooseModule(type, inputStreamReader);
     }
 }
