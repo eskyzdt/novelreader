@@ -17,7 +17,7 @@
 
 
 ### 下一步工作
-    1. 从指定的页数开始阅读  ModuleChoose,startFrom()
+    1. 从指定的页数开始阅读  ModuleChoose.startFrom()
     2. 记录阅读结束时的位置
     
 
