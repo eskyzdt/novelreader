@@ -1,0 +1,13 @@
+package com.eskyzdt.novelreader.reader;
+
+import java.io.InputStreamReader;
+
+public interface ModuleChoose {
+
+    /**
+     * 根据入参选择不同的阅读模式
+     * @param type 1 自动翻页 2 点击翻页
+     */
+    void chooseModule(String type, InputStreamReader inputStreamReader);
+
+}
