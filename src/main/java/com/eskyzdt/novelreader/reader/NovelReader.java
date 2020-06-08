@@ -11,9 +11,9 @@ public class NovelReader {
     // 可调用系统代码的命令,等研究
      // Runtime.getRuntime().exec("cmd /c start cls ");
 
-    public static void main(String[] args) throws IOException {
-        // 文件路径
-        String path = "D:\\development\\IdeaProjects\\eskyzdt\\eskyzdt-server\\src\\main\\resources\\imnot.txt";
+    public static void run() throws IOException {
+        // 文件路径,在项目的根目录下
+        String path = "imnot.txt";
         File file = new File(path);
         // 输入流读取文件字节流
         FileInputStream fileInputStream = new FileInputStream(file);
@@ -27,7 +27,10 @@ public class NovelReader {
             System.out.println("输入错误,请重新选择:");
             type = scanner.nextLine();
         }
-        choose.chooseModule(type, inputStreamReader);
+        System.out.println("请选择从多少行开始阅读:");
+        int count = scanner.nextInt();
+        // 选择阅读模式并开始阅读
+        choose.read( count ,type, inputStreamReader);
     }
 
 

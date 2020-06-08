@@ -10,4 +10,14 @@ public interface ModuleChoose {
      */
     void chooseModule(String type, InputStreamReader inputStreamReader);
 
+    /**
+     * 从指定的页数开始阅读 todo
+     * @param page
+     */
+    InputStreamReader startFrom(int page, InputStreamReader inputStreamReader);
+
+    default void read(int page, String type, InputStreamReader inputStreamReader) {
+        inputStreamReader = startFrom(page, inputStreamReader);
+        chooseModule(type, inputStreamReader);
+    }
 }

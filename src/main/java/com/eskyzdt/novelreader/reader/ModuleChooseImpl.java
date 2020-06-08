@@ -33,6 +33,11 @@ public class ModuleChooseImpl implements ModuleChoose {
         }
     }
 
+    @Override
+    public InputStreamReader startFrom(int page, InputStreamReader inputStreamReader) {
+        return inputStreamReader;
+    }
+
     /**
      * 自动翻页的方法
      * @param inputStreamReader
