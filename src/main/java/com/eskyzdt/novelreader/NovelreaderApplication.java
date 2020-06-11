@@ -1,6 +1,7 @@
 package com.eskyzdt.novelreader;
 
 import com.eskyzdt.novelreader.reader.NovelReader;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.IOException;
@@ -9,8 +10,9 @@ import java.io.IOException;
 public class NovelreaderApplication {
 
     public static void main(String[] args) throws IOException {
-        //SpringApplication.run(NovelreaderApplication.class, args);
-        NovelReader.run();
+        SpringApplication.run(NovelreaderApplication.class, args);
+        NovelReader reader = new NovelReader();
+        new Thread(reader).run();
     }
 
 }

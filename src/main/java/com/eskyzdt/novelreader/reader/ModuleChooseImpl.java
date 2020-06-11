@@ -48,11 +48,13 @@ public class ModuleChooseImpl implements ModuleChoose {
     public InputStream startFrom(String page, int column, InputStream inputStream) {
         try {
             Long pageLong = Long.valueOf(page);
-            // 当前页数
-            currentPage = pageLong;
+            // 把当前页数置为跳过的页数+1
+            currentPage = pageLong + 1;
             // LINEWORDCOUNT是一行多少个字符,而一个字符占两个字节,所以要乘以2
+            // 如果输入第0页,那么默认是第一页
+            pageLong = pageLong == 0 ? 1 : pageLong;
             // 再乘以column,从第多少页开始
-            long byteSize = (pageLong - 1)* LINEWORDCOUNT * 2 * column;
+            long byteSize = pageLong * LINEWORDCOUNT * 2 * column;
             inputStream.skip(byteSize);
         } catch (Exception e) {
             System.out.println("请重新选择从多少页开始阅读");
@@ -105,7 +107,7 @@ public class ModuleChooseImpl implements ModuleChoose {
             }
             // 文件读取完就停止
             if (i == -1) {
-                break;
+                Runtime.getRuntime().exit(0);
             }
         }
     }
@@ -121,7 +123,6 @@ public class ModuleChooseImpl implements ModuleChoose {
             int result;
             try {
                 result = readLine(count, inputStreamReader);
-                // 页数
                 System.out.println("                                          " + (currentPage++));
             } catch (IOException e) {
                 // todo 记录阅读位置
@@ -129,7 +130,7 @@ public class ModuleChooseImpl implements ModuleChoose {
             }
             // 文件读取完就停止
             if (result == -1) {
-                break;
+                Runtime.getRuntime().exit(0);
             }
             pressEnter();
         }
