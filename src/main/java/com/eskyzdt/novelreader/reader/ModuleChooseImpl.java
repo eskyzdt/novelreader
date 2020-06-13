@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 在java中, char的长度是两个字节,从0-65535 中文在这个范围内
+ */
 public class ModuleChooseImpl implements ModuleChoose {
 
     /**
@@ -45,11 +48,11 @@ public class ModuleChooseImpl implements ModuleChoose {
     public InputStream startFrom(String page, int column, InputStream inputStream) {
         try {
             Long pageLong = Long.valueOf(page);
-            // 把当前页数置为跳过的页数+1
-            currentPage = pageLong + 1;
+            // 当前页数
+            currentPage = pageLong;
             // LINEWORDCOUNT是一行多少个字符,而一个字符占两个字节,所以要乘以2
             // 再乘以column,从第多少页开始
-            long byteSize = pageLong * LINEWORDCOUNT * 2 * column;
+            long byteSize = (pageLong - 1)* LINEWORDCOUNT * 2 * column;
             inputStream.skip(byteSize);
         } catch (Exception e) {
             System.out.println("请重新选择从多少页开始阅读");
@@ -118,6 +121,8 @@ public class ModuleChooseImpl implements ModuleChoose {
             int result;
             try {
                 result = readLine(count, inputStreamReader);
+                // 页数
+                System.out.println("                                          " + (currentPage++));
             } catch (IOException e) {
                 // todo 记录阅读位置
                 break;
@@ -140,28 +145,46 @@ public class ModuleChooseImpl implements ModuleChoose {
         int result;
         // 读取字符,每次读取这么多,当然去除掉空格什么的达不到要求的行数
         // 但是就这样,设计如此
-        int lengthPerRead = n * LINEWORDCOUNT;
-        char[] readChar = new char[lengthPerRead];
+        char[] readChar = new char[n * LINEWORDCOUNT];
         // 读取字符,如果返回值为-1说明读完了
         result = inputStreamReader.read(readChar);
         // 对读取到的字符进行处理
         // 创建一个临时的字节
         char[] charTem = new char[LINEWORDCOUNT];
         int countTem = 0;
-        for (int i = 0; i < lengthPerRead; i++) {
+        // 把字符流读取的这么多字符进行处理
+        int total = readChar.length;
+        for (int i = 0; i < total; i++) {
+            // 1.取出当前字符
             char aChar = readChar[i];
-            // 去年空格和换行符之类的
-            if (aChar != '\r' & aChar != '\n' & aChar != ' ') {
-                try {
+
+            // 2.如果当前字符是读取的最后一个了
+            if (i == total - 1) {
+                // 当不是无用字符时放入数组中
+                // 这里有个坑是打印char[]时,如果里面的\r是单个组成的,那么整个数组都不会被打印出来,只会打印一个换行
+                if (aChar != '\r' & aChar != '\n' & aChar != ' ' & aChar != 12288) {
                     charTem[countTem] = aChar;
-                } catch (Exception e) {
+                }
+                // 最后一个要被打印的数组
+                System.out.println(charTem);
+                // 跳出循环
+                break;
+            }
+
+            // 3.去掉空格和换行符之类的
+            if (aChar != '\r' & aChar != '\n' & aChar != ' ' & aChar != 12288) {
+                // 一个临时数组,用来输出每一行
+                charTem[countTem] = aChar;
+                countTem++;
+                // 数组最后的一个下标是lengthPerRead-1
+                // 每当这个临时数组满了,就打印
+                if (countTem == LINEWORDCOUNT - 1) {
                     // 存满了,打印
                     System.out.println(charTem);
-                    // 初始化
+                    // 把临时数组重新初始化初始化
                     charTem = new char[LINEWORDCOUNT];
                     countTem = 0;
                 }
-                countTem++;
             }
         }
         return result;

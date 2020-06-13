@@ -1,7 +1,7 @@
 # 说明
 本工具提供文本自动翻页和手动翻页的功能:
 
-# 目前版本V1.1
+# 目前版本V1.5
  ##支持的功能: 
     # 1.自动翻页
     # 2.手动翻页(按enter键翻页)
@@ -17,6 +17,9 @@
     ModuleChoose中的模板read(int page, String type, InputStreamReader inputStreamReader)方法为主逻辑
     后续更新均在read方法中更新
 
+### 修复了一些bug
+    # 1. 打印每行时出现少字的bug
+    # 2. 无法去除中文全角空格(unicode值12288)的bug
 
 ### 下一步工作
     1.提供登陆注册功能
