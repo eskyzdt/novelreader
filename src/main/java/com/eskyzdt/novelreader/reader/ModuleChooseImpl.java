@@ -48,13 +48,14 @@ public class ModuleChooseImpl implements ModuleChoose {
     public InputStream startFrom(String page, int column, InputStream inputStream) {
         try {
             Long pageLong = Long.valueOf(page);
-            // 把当前页数置为跳过的页数+1
-            currentPage = pageLong + 1;
-            // LINEWORDCOUNT是一行多少个字符,而一个字符占两个字节,所以要乘以2
             // 如果输入第0页,那么默认是第一页
             pageLong = pageLong == 0 ? 1 : pageLong;
+            currentPage = pageLong;
+            // 跳过的页数为当前页-1
+            long pageJump = pageLong - 1;
+            // LINEWORDCOUNT是一行多少个字符,而一个字符占两个字节,所以要乘以2
             // 再乘以column,从第多少页开始
-            long byteSize = pageLong * LINEWORDCOUNT * 2 * column;
+            long byteSize = (pageJump) * LINEWORDCOUNT * 2 * column;
             inputStream.skip(byteSize);
         } catch (Exception e) {
             System.out.println("请重新选择从多少页开始阅读");
