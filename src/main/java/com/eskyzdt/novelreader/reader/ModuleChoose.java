@@ -23,7 +23,6 @@ public interface ModuleChoose {
         // 根据入参执行方法,选择阅读模式
         chooseModule(type, count, inputStreamReader);
     }
-
     /**
      * 选择阅读模式和起始位置
      * @return

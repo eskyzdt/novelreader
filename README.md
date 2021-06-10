@@ -5,6 +5,8 @@
 
 将filepath更改为所需要被读取的文件路径
 
+如果想把被读取的文件放到resources目录下读取,可更改NovelReader下的run()方法,  
+// Resource resource2 = new ClassPathResource("xxx.txt");
 
 # 目前版本V1.5
  ##支持的功能: 

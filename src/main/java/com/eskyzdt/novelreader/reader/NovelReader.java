@@ -29,10 +29,14 @@ public class NovelReader implements Runnable{
             Resource resource = new ClassPathResource("application.properties");
             Properties props = PropertiesLoaderUtils.loadProperties(resource);
             filepath = props.getProperty("filepath");
-        } catch (IOException e) {
+            // 使用ClassPathResource可以获得resources目录下的文件,这样即使打包也可以看了
+            // Resource resource2 = new ClassPathResource("xxx.txt");
+            // File file = resource2.getFile();
+            // Resource resource3 = new ClassPathResource("com/eskyzdt/novelreader/NovelreaderApplication.class");
+        } catch (
+                IOException e) {
             e.printStackTrace();
         }
-
         File file = new File(filepath);
         ModuleChoose choose = new ModuleChooseImpl();
         // 输入流读取文件字节流
