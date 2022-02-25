@@ -39,7 +39,7 @@ public interface ModuleChoose {
 
     /**
      * 根据入参选择不同的阅读模式
-     * @param type 1 自动翻页 2 点击翻页
+     * @param type 1 自动翻页 2 点击翻页 3 只留汉字
      */
     void chooseModule(String type, int count, InputStreamReader inputStreamReader);
 

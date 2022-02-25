@@ -16,7 +16,7 @@ public class ModuleChooseImpl implements ModuleChoose {
     /**
      * 一行多少个字
      */
-    final private static int LINEWORDCOUNT = 60;
+    final private static int LINEWORDCOUNT = 5;
 
     /**
      * 当前页数
@@ -25,10 +25,10 @@ public class ModuleChooseImpl implements ModuleChoose {
 
     @Override
     public Map<String, Object> firstStep() {
-        System.out.println("请选择阅读模式(1.自动翻页 2.手动翻页):");
+        System.out.println("请选择阅读模式(1.自动翻页 2.手动翻页 3.只留汉字):");
         Scanner scanner = new Scanner(System.in);
         String type = scanner.nextLine();
-        while (!"1".equals(type) && !"2".equals(type)) {
+        while (!"1".equals(type) && !"2".equals(type) && !"3".equals(type)) {
             System.out.println("输入错误,请重新选择:");
             type = scanner.nextLine();
         }
@@ -80,6 +80,9 @@ public class ModuleChooseImpl implements ModuleChoose {
             case "2":
                 hand(inputStreamReader, count);
                 break;
+            case "3":
+                word(inputStreamReader, count);
+                break;
             default:
                 break;
         }
@@ -100,7 +103,7 @@ public class ModuleChooseImpl implements ModuleChoose {
             try {
                 i = readLine(count, inputStreamReader);
                 // 自动读取时不需要pressEnter,所以要加个空行
-                System.out.println("                                          " + (currentPage++));
+//                System.out.println("                                          " + (currentPage++));
                 TimeUnit.SECONDS.sleep(seconds);
             } catch (Exception e) {
                 // todo 记录阅读位置
@@ -124,7 +127,7 @@ public class ModuleChooseImpl implements ModuleChoose {
             int result;
             try {
                 result = readLine(count, inputStreamReader);
-                System.out.println("                                          " + (currentPage++));
+            //    System.out.println("                                          " + (currentPage++));
             } catch (IOException e) {
                 // todo 记录阅读位置
                 break;
@@ -136,6 +139,31 @@ public class ModuleChooseImpl implements ModuleChoose {
             pressEnter();
         }
     }
+
+    // 替换除了汉字以外的字符 [0-9a-zA-Z\.\:\=\>\<\ \_\,\]\[\"\?\(\)\-\!\#]
+    /**
+     * 只留汉字
+     *
+     * @param inputStreamReader 字节流到字符流的桥接器
+     */
+    private void word(InputStreamReader inputStreamReader, int count) {
+        while (true) {
+            // 输入流
+            int i;
+            try {
+                i = wordRead(count, inputStreamReader);
+            } catch (Exception e) {
+                // todo 记录阅读位置
+                break;
+            }
+            // 文件读取完就停止
+            if (i == -1) {
+                Runtime.getRuntime().exit(0);
+            }
+        }
+    }
+
+
 
     /**
      * @param n                 一次读取的行数
@@ -151,8 +179,9 @@ public class ModuleChooseImpl implements ModuleChoose {
         // 读取字符,如果返回值为-1说明读完了
         result = inputStreamReader.read(readChar);
         // 对读取到的字符进行处理
-        // 创建一个临时的字节
-        char[] charTem = new char[LINEWORDCOUNT];
+        // 创建一个临时的字节数组
+        // 数组增加一个,用于处理最后一行
+        char[] charTem = new char[LINEWORDCOUNT + 1];
         int countTem = 0;
         // 把字符流读取的这么多字符进行处理
         int total = readChar.length;
@@ -177,6 +206,49 @@ public class ModuleChooseImpl implements ModuleChoose {
             if (aChar != '\r' & aChar != '\n' & aChar != ' ' & aChar != 12288) {
                 // 一个临时数组,用来输出每一行
                 charTem[countTem] = aChar;
+                // 数组最后的一个下标是lengthPerRead-1
+                // 每当这个临时数组满的时候,就打印
+                if (countTem == LINEWORDCOUNT - 1) {
+                    // 差一个就存满时,打印
+                    System.out.println(charTem);
+                    // 把临时数组重新初始化初始化
+                    charTem = new char[LINEWORDCOUNT];
+                    countTem = 0;
+                }
+                // 这里要自增一下
+                countTem++;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @param n                 一次读取的行数
+     * @param inputStreamReader 文件的输入流
+     * @return
+     * @throws IOException
+     */
+    private static int wordRead(int n,  InputStreamReader inputStreamReader) throws IOException {
+        int result;
+        // 读取字符,每次读取这么多,当然去除掉空格什么的达不到要求的行数
+        // 但是就这样,设计如此
+        char[] readChar = new char[n * LINEWORDCOUNT];
+        // 读取字符,如果返回值为-1说明读完了
+        result = inputStreamReader.read(readChar);
+        // 对读取到的字符进行处理
+        // 创建一个临时的字节
+        char[] charTem = new char[LINEWORDCOUNT];
+        int countTem = 0;
+        // 把字符流读取的这么多字符进行处理
+        int total = readChar.length;
+        for (int i = 0; i < total; i++) {
+            // 1.取出当前字符
+            char aChar = readChar[i];
+
+            // 3.去掉空格和换行符之类的
+            if ((aChar + "").getBytes().length != 1 || aChar == '\n') {
+                // 一个临时数组,用来输出每一行
+                charTem[countTem] = aChar;
                 countTem++;
                 // 数组最后的一个下标是lengthPerRead-1
                 // 每当这个临时数组满了,就打印
@@ -191,6 +263,7 @@ public class ModuleChooseImpl implements ModuleChoose {
         }
         return result;
     }
+
 
     private static void pressEnter() {
         while (true) {
