@@ -1,5 +1,9 @@
 package com.eskyzdt.novelreader.reader;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -11,12 +15,21 @@ import java.util.concurrent.TimeUnit;
 /**
  * 在java中, char的长度是两个字节,从0-65535 中文在这个范围内
  */
+@Service
 public class ModuleChooseImpl implements ModuleChoose {
 
+    @Value("${lineword}")
+    private String tem;
+
     /**
-     * 一行多少个字
+     * 一行多少个字 由于用了模板方法, 在接口类中实现了方法, 导致用@Value不能自动注入, 需要手动注入
      */
-    final private static int LINEWORDCOUNT = 5;
+    private static Integer LINEWORDCOUNT = null;
+
+    @PostConstruct
+    public void ccc() {
+        LINEWORDCOUNT = Integer.valueOf(tem);
+    }
 
     /**
      * 当前页数
@@ -171,7 +184,7 @@ public class ModuleChooseImpl implements ModuleChoose {
      * @return
      * @throws IOException
      */
-    private static int readLine(int n, InputStreamReader inputStreamReader) throws IOException {
+    private int readLine(int n, InputStreamReader inputStreamReader) throws IOException {
         int result;
         // 读取字符,每次读取这么多,当然去除掉空格什么的达不到要求的行数
         // 但是就这样,设计如此
@@ -228,7 +241,7 @@ public class ModuleChooseImpl implements ModuleChoose {
      * @return
      * @throws IOException
      */
-    private static int wordRead(int n,  InputStreamReader inputStreamReader) throws IOException {
+    private int wordRead(int n,  InputStreamReader inputStreamReader) throws IOException {
         int result;
         // 读取字符,每次读取这么多,当然去除掉空格什么的达不到要求的行数
         // 但是就这样,设计如此

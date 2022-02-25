@@ -14,6 +14,7 @@ public class NovelReader implements Runnable{
 
     // 文件路径,本地环境是在项目的根目录下,打包后路径会变
     // 这里因为没在spring的管理下,所以注入不进去,另外@Value也不能注入static属性中
+    // 另外用@Value注解时, 即使在application.properties中写的是数字, 接收时也会被识别为char类型, 用int这种类型接收会null
     //@Value("${filepath}")
     //private String filePath;
     // private static String filePath = "imnot.txt";
